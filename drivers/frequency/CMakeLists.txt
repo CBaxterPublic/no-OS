@@ -100,6 +100,11 @@ target_include_directories(no-os PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/admv1013)
 no_os_sources_ifdef(CONFIG_FREQUENCY_ADMV1014 ${CMAKE_CURRENT_SOURCE_DIR}/admv1014/admv1014.c)
 target_include_directories(no-os PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/admv1014)
 
+# admv1355
+no_os_sources_ifdef(CONFIG_FREQUENCY_ADMV1355 ${CMAKE_CURRENT_SOURCE_DIR}/admv1355/admv1355.c)
+no_os_sources_ifdef(CONFIG_FREQUENCY_IIO_ADMV1355 ${CMAKE_CURRENT_SOURCE_DIR}/admv1355/iio_admv1355.c)
+target_include_directories(no-os PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/admv1355)
+
 # adrf6780
 no_os_sources_ifdef(CONFIG_FREQUENCY_ADRF6780 ${CMAKE_CURRENT_SOURCE_DIR}/adrf6780/adrf6780.c)
 target_include_directories(no-os PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/adrf6780)

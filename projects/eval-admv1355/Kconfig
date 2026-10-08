@@ -1,0 +1,24 @@
+menu "eval-admv1355 Configuration"
+
+choice EVAL_ADMV1355_EXAMPLE
+	prompt "Example variant"
+	default EVAL_ADMV1355_BASIC_EXAMPLE
+
+config EVAL_ADMV1355_BASIC_EXAMPLE
+	bool "Basic example"
+	help
+	  Brings up the EVAL-ADMV1355 board, initializes the ADMV1355
+	  wideband microwave upconverter, and exercises a few of the
+	  driver APIs over UART.
+
+config EVAL_ADMV1355_IIO_EXAMPLE
+	bool "IIO example"
+	depends on IIO
+	help
+	  IIO framework example. Launches an IIOD server for remote
+	  configuration and register access using IIO Oscilloscope or
+	  libiio clients.
+
+endchoice
+
+endmenu
