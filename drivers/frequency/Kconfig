@@ -176,6 +176,18 @@ config FREQUENCY_IIO_ADMV1355
 	bool "Enable ADMV1355 IIO driver"
 	default n
 
+config FREQUENCY_ADMV1455
+	depends on SPI
+	select GPIO
+	bool "Enable ADMV1455 microwave downconverter driver"
+	default n
+
+config FREQUENCY_IIO_ADMV1455
+	depends on SPI && IIO
+	select FREQUENCY_ADMV1455
+	bool "Enable ADMV1455 IIO driver"
+	default n
+
 config FREQUENCY_ADRF6780
 	depends on SPI
 	bool "Enable ADRF6780 upconverter driver"

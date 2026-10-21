@@ -1,0 +1,24 @@
+menu "eval-admv1455 Configuration"
+
+choice EVAL_ADMV1455_EXAMPLE
+	prompt "Example variant"
+	default EVAL_ADMV1455_BASIC_EXAMPLE
+
+config EVAL_ADMV1455_BASIC_EXAMPLE
+	bool "Basic example"
+	help
+	  Brings up the EVAL-ADMV1455 board, initializes the ADMV1455
+	  microwave downconverter, dumps its registers, and exercises the
+	  driver APIs over UART.
+
+config EVAL_ADMV1455_IIO_EXAMPLE
+	bool "IIO example"
+	depends on IIO
+	help
+	  IIO framework example. Launches an IIOD server for remote
+	  configuration and register access using IIO Oscilloscope or
+	  libiio clients.
+
+endchoice
+
+endmenu
