@@ -1,7 +1,7 @@
 /***************************************************************************//**
  *   @file   iio_admv1355.c
  *   @brief  Implementation of admv1355 IIO Driver.
- *   @author Analog Devices, Inc.
+ *   @author Charles Baxter (charles.baxter@analog.com)
 ********************************************************************************
  * Copyright 2026(c) Analog Devices, Inc.
  *

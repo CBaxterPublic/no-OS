@@ -1,7 +1,7 @@
 /***************************************************************************//**
  *   @file   basic_example.c
  *   @brief  Basic example code for eval-admv1355 project.
- *   @author Analog Devices, Inc.
+ *   @author Charles Baxter (charles.baxter@analog.com)
 ********************************************************************************
  * Copyright 2026(c) Analog Devices, Inc.
  *

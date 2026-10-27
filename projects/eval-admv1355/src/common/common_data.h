@@ -1,7 +1,7 @@
 /***************************************************************************//**
  *   @file   common_data.h
  *   @brief  Defines common data to be used by eval-admv1355 examples.
- *   @author Analog Devices, Inc.
+ *   @author Charles Baxter (charles.baxter@analog.com)
 ********************************************************************************
  * Copyright 2026(c) Analog Devices, Inc.
  *

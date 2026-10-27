@@ -1,7 +1,7 @@
 /***************************************************************************//**
  *   @file   main.c
  *   @brief  Main file for xilinx platform of eval-admv1455 project.
- *   @author Analog Devices, Inc.
+ *   @author Charles Baxter (charles.baxter@analog.com)
 ********************************************************************************
  * Copyright 2026(c) Analog Devices, Inc.
  *

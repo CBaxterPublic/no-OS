@@ -2,7 +2,7 @@
  *   @file   parameters.c
  *   @brief  Definition of xilinx platform data used by the eval-admv1455
  *           project.
- *   @author Analog Devices, Inc.
+ *   @author Charles Baxter (charles.baxter@analog.com)
 ********************************************************************************
  * Copyright 2026(c) Analog Devices, Inc.
  *

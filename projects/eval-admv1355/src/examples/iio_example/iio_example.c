@@ -1,7 +1,7 @@
 /***************************************************************************//**
  *   @file   iio_example.c
  *   @brief  Implementation of IIO example for eval-admv1355 project.
- *   @author Analog Devices, Inc.
+ *   @author Charles Baxter (charles.baxter@analog.com)
 ********************************************************************************
  * Copyright 2026(c) Analog Devices, Inc.
  *
@@ -33,6 +33,7 @@
 #include "common_data.h"
 #include "iio_admv1355.h"
 #include "iio_app.h"
+#include "iio_example.h"
 #include "no_os_print_log.h"
 
 /**

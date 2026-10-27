@@ -1,7 +1,7 @@
 /***************************************************************************//**
  *   @file   iio_example.h
  *   @brief  IIO example header for eval-admv1355 project.
- *   @author Analog Devices, Inc.
+ *   @author Charles Baxter (charles.baxter@analog.com)
 ********************************************************************************
  * Copyright 2026(c) Analog Devices, Inc.
  *
