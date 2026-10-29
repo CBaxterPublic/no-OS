@@ -53,9 +53,6 @@ targets:
       - KuiperDLDriver: {}
       - MassStorageDriver:
           partition: /dev/disk/by-id/usb-LinuxAut_sdFST_HS-SD_MMC_00048.00589-0:0-part1
-      - BootFPGASoC:
-          reached_linux_marker: analog
-          wait_for_linux_prompt_timeout: 180
       - PyVISADriver:
           name: fsu_session
           bindings:
