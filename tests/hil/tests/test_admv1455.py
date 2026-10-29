@@ -16,6 +16,7 @@ serial backend needs the console tty, so the console is released after boot.
 import time
 
 import pytest
+from pyinst.instruments import SignalGenerator, SpectrumAnalyzer
 
 pytestmark = [
     pytest.mark.iio_hardware(["admv1455"]),
@@ -57,41 +58,45 @@ def iio_ctx(request, target, loaded_firmware):
 
 @pytest.fixture
 def rf_bench(request, target):
-    """Signal generator driving the input and analyzer set up on the output."""
+    """Signal generator driving the input and spectrum analyzer on the output.
+
+    Instruments are looked up by type, so the model comes from the labgrid env.
+    """
     cfg = request.config.getoption
-    siggen = target.get_driver("PyInstSignalGeneratorDriver")
-    fsu = target.get_driver("PyInstSpectrumAnalyzerDriver")
-    siggen.output_enabled = False
-    siggen.frequency = cfg("--rf-in-freq")
-    siggen.power = cfg("--rf-in-power")
-    fsu.center_frequency = cfg("--rf-out-freq")
-    fsu.span = cfg("--rf-span")
-    fsu.reference_level = cfg("--rf-ref-level")
-    siggen.output_enabled = True
-    yield fsu
-    siggen.output_enabled = False
+    signal_generator = target.get_driver(SignalGenerator)
+    spectrum_analyzer = target.get_driver(SpectrumAnalyzer)
+    signal_generator.output_enabled = False
+    signal_generator.frequency = cfg("--rf-in-freq")
+    signal_generator.power = cfg("--rf-in-power")
+    spectrum_analyzer.center_frequency = cfg("--rf-out-freq")
+    spectrum_analyzer.span = cfg("--rf-span")
+    spectrum_analyzer.reference_level = cfg("--rf-ref-level")
+    signal_generator.output_enabled = True
+    yield spectrum_analyzer
+    signal_generator.output_enabled = False
 
 
-def _peak_dbm(fsu):
-    _freqs, levels = fsu.get_trace()
+def _peak_dbm(spectrum_analyzer):
+    _freqs, levels = spectrum_analyzer.get_trace()
     return float(levels.max()), float(sorted(levels)[len(levels) // 2])
 
 
 def test_dsa_attenuates_output(iio_ctx, rf_bench):
     """Stepping the DSA down by DSA_STEP_DB lowers the output peak by about that much."""
+    spectrum_analyzer = rf_bench
     chan = iio_ctx.find_device("admv1455").find_channel("altvoltage0", False)
     attr = chan.attrs[DSA_ATTR]
     original = attr.value
     try:
         attr.value = "0dB"
         time.sleep(SETTLE_S)
-        ref_peak, noise = _peak_dbm(rf_bench)
+        ref_peak, noise = _peak_dbm(spectrum_analyzer)
         assert ref_peak - noise >= MIN_SNR_DB, (
             f"no tone at the analyzer: peak {ref_peak:.1f} dBm vs median {noise:.1f} dBm")
 
         attr.value = f"-{DSA_STEP_DB}dB"
         time.sleep(SETTLE_S)
-        att_peak, _ = _peak_dbm(rf_bench)
+        att_peak, _ = _peak_dbm(spectrum_analyzer)
     finally:
         attr.value = original
 

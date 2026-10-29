@@ -26,15 +26,15 @@ targets:
           kernel_path: /home/adi/Desktop/zcu102_admv_test_v4/zcu102_admv_test_v4/Image
           BOOTBIN_path: /home/adi/Desktop/zcu102_admv_test_v4/zcu102_admv_test_v4/BOOT.BIN
           device_tree_path: /home/adi/Desktop/zcu102_admv_test_v4/zcu102_admv_test_v4/system.dtb
-      # RF bench: R&S FSU67 spectrum analyzer (output) and R&S SMA100B signal
-      # generator (input). "@py" selects the pyvisa-py backend (no NI-VISA).
+      # RF bench: spectrum analyzer on the output (R&S FSU67) and signal generator
+      # on the input (R&S SMA100B). "@py" selects the pyvisa-py backend (no NI-VISA).
       - PyVISADevice:
-          name: fsu_visa
+          name: spectrum_analyzer_visa
           type: TCPIP0
           url: 10.10.100.10::inst0
           backend: "@py"
       - PyVISADevice:
-          name: siggen_visa
+          name: signal_generator_visa
           type: TCPIP0
           url: 10.10.100.15::inst0
           backend: "@py"
@@ -54,20 +54,20 @@ targets:
       - MassStorageDriver:
           partition: /dev/disk/by-id/usb-LinuxAut_sdFST_HS-SD_MMC_00048.00589-0:0-part1
       - PyVISADriver:
-          name: fsu_session
+          name: spectrum_analyzer_session
           bindings:
-            pyvisa_resource: fsu_visa
+            pyvisa_resource: spectrum_analyzer_visa
       - PyVISADriver:
-          name: siggen_session
+          name: signal_generator_session
           bindings:
-            pyvisa_resource: siggen_visa
+            pyvisa_resource: signal_generator_visa
       - PyInstSpectrumAnalyzerDriver:
-          name: fsu
+          name: spectrum_analyzer
           instrument: FSU67
           bindings:
-            visa: fsu_session
+            visa: spectrum_analyzer_session
       - PyInstSignalGeneratorDriver:
-          name: siggen
+          name: signal_generator
           instrument: SMA100B
           bindings:
-            visa: siggen_session
+            visa: signal_generator_session
