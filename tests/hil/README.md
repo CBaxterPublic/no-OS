@@ -7,7 +7,7 @@ and emits JUnit XML + HTML reports.
 
 ## Layout
 
-- `builder.py` — produce (via `tools/scripts/build_projects.py`) or locate boot artifacts.
+- `builder.py` — produce (via `tools/scripts/no_os_build.py`) or locate boot artifacts.
 - `loaders/` — `jtag` (xsct `.elf` load) and `sdmux` (BOOT.BIN SD boot); selectable.
 - `jtag_loader.py` — wraps `tools/scripts/platform/xilinx/util.tcl`.
 - `reporting.py` + `conftest.py` — fixtures, options, JUnit/HTML metadata hooks.
@@ -37,7 +37,7 @@ On hardware (copy an `env/*.example.yaml` to `env/<name>.yaml` first):
 
 ```bash
 pytest tests/hil/tests --lg-env tests/hil/env/adrv9009_zc706.yaml \
-  -m iio_hardware --noos-project adrv9009 --noos-build demo \
+  -m iio_hardware --noos-project adrv9009 --noos-build demo --noos-board zc706 \
   --noos-xsa /path/adrv9009_zc706.xsa \
   --junit-xml=hil-report.xml --html=hil-report.html --self-contained-html
 ```
@@ -47,9 +47,9 @@ pytest tests/hil/tests --lg-env tests/hil/env/adrv9009_zc706.yaml \
 | Option | Meaning |
 | --- | --- |
 | `--noos-artifacts <dir\|zip>` | Use pre-built boot artifacts (skip build) |
-| `--noos-project/-platform/-build` | What `build_projects.py` builds |
+| `--noos-project/-build/-board` | Project, variant (`<variant>.conf`) and board passed to `tools/scripts/no_os_build.py` (`-platform` is report metadata only) |
 | `--noos-loader {jtag,sdmux,auto}` | Load mechanism (default `auto`) |
-| `--noos-xsa` | Xilinx hardware design (required for JTAG load) |
+| `--noos-xsa` | Xilinx hardware design (`--hardware` for the build; required for JTAG load) |
 | `--noos-iio-uri` | libiio URI for Phase 2 (else Phase 2 skips) |
 | `--lg-env` | labgrid env YAML (local bench or coordinator) |
 

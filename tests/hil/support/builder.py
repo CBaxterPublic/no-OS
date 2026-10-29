@@ -1,8 +1,7 @@
 """Produce or locate no-OS boot artifacts for HIL tests.
 
-build_projects.py's xilinx export ships BOOT.BIN + bootgen_sysfiles.tar.gz but
-NOT the .elf, so build mode (Task 3) discovers over the builds_dir (where the
-.elf lives), not just the export dir.
+Build mode runs tools/scripts/no_os_build.py, whose output directory holds both
+the .elf and BOOT.BIN.
 """
 
 from __future__ import annotations
@@ -13,8 +12,8 @@ import sys
 import zipfile
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-BUILD_PROJECTS = REPO_ROOT / "tools" / "scripts" / "build_projects.py"
+REPO_ROOT = Path(__file__).resolve().parents[3]
+NO_OS_BUILD = REPO_ROOT / "tools" / "scripts" / "no_os_build.py"
 
 # Artifacts field -> glob pattern; first sorted match wins.
 _ARTIFACT_PATTERNS = {
@@ -71,23 +70,21 @@ def unpack_if_zip(path, dest) -> Path:
     return path
 
 
-def build_via_build_projects(*, project, platform, build_name, builds_dir,
-                             export_dir, log_dir, python=sys.executable,
-                             hardware=None) -> Path:
-    """Run build_projects.py for one named build. Returns the builds_dir Path.
+def build_via_no_os_build(*, project, variant, board, builds_dir,
+                          python=sys.executable, hardware=None) -> Path:
+    """Run no_os_build.py for one project/variant/board. Returns the artifacts dir.
 
-    Raises subprocess.CalledProcessError on build failure (check=True). After
-    this returns, call discover_artifacts(builds_dir) to locate the .elf and
-    (for xilinx) the BOOT.BIN.
+    The build lands in <builds_dir>/<project>-<variant>-<board>/build, which
+    holds the .elf and (for xilinx) BOOT.BIN. Raises
+    subprocess.CalledProcessError on build failure (check=True).
     """
     builds_dir = Path(builds_dir)
     argv = [
-        python, str(BUILD_PROJECTS), str(REPO_ROOT),
-        f"-export_dir={export_dir}", f"-log_dir={log_dir}",
-        f"-builds_dir={builds_dir}", f"-project={project}",
-        f"-platform={platform}", f"-build_name={build_name}",
+        python, str(NO_OS_BUILD), "build",
+        "--project", project, "--variant", variant, "--board", board,
+        "--build-dir", str(builds_dir),
     ]
     if hardware:
-        argv.append(f"-hardware={hardware}")
+        argv += ["--hardware", str(hardware)]
     subprocess.run(argv, cwd=REPO_ROOT, check=True)
-    return builds_dir
+    return builds_dir / f"{project}-{variant}-{board}" / "build"

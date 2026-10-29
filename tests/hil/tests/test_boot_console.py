@@ -5,7 +5,7 @@ board (local bench or farm):
 
     pytest tests/hil/tests/test_boot_console.py \
         --lg-env tests/hil/env/adrv9009_zc706.yaml \
-        -m iio_hardware --noos-project adrv9009 --noos-build demo \
+        -m iio_hardware --noos-project adrv9009 --noos-build demo --noos-board zc706 \
         --noos-xsa /path/adrv9009_zc706.xsa \
         --junit-xml=hil-report.xml --html=hil-report.html --self-contained-html
 """

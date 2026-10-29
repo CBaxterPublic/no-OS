@@ -5,13 +5,13 @@ Run on hardware (local bench or labgrid farm):
     # Phase 1: Console boot test
     pytest tests/hil/tests/test_ad9361.py \
         --lg-env tests/hil/env/ad9361_zc706.yaml \
-        -m iio_hardware --noos-project ad9361 --noos-build demo \
+        -m iio_hardware --noos-project ad9361 --noos-build demo --noos-board zc706 \
         --noos-xsa /path/ad9361_zc706.xsa
 
     # Phase 2: IIO / pyadi test
     pytest tests/hil/tests/test_ad9361.py \
         --lg-env tests/hil/env/ad9361_zc706.yaml \
-        -m iio_hardware --noos-project ad9361 --noos-build iio \
+        -m iio_hardware --noos-project ad9361 --noos-build iio --noos-board zc706 \
         --noos-xsa /path/ad9361_zc706.xsa \
         --noos-iio-uri 'serial:/dev/ttyUSB0,115200'
 """

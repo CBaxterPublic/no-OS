@@ -1,7 +1,7 @@
 # Example labgrid env: ADRV9009 on ZC706, board-farm / coordinator.
 # Copy to adrv9009_zc706.yaml, fill the REPLACE_ME values, then:
 #   pytest tests/hil/tests --lg-env tests/hil/env/adrv9009_zc706.yaml \
-#     -m iio_hardware --noos-project adrv9009 --noos-build demo \
+#     -m iio_hardware --noos-project adrv9009 --noos-build demo --noos-board zc706 \
 #     --noos-xsa /path/adrv9009_zc706.xsa
 targets:
   main:

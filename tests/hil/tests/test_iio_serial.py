@@ -4,7 +4,7 @@ Requires the Phase-2 extras and an IIOD build (CONFIG_IIO):
     pip install -r tests/hil/requirements-hil-iio.txt
     pytest tests/hil/tests/test_iio_serial.py \
         --lg-env tests/hil/env/adrv9009_zc706.yaml -m iio_hardware \
-        --noos-project adrv9009 --noos-build iio --noos-xsa /path/adrv9009_zc706.xsa \
+        --noos-project adrv9009 --noos-build iio --noos-board zc706 --noos-xsa /path/adrv9009_zc706.xsa \
         --noos-iio-uri 'serial:/dev/ttyUSB0,115200'
 
 The libiio serial backend needs a *local* tty; on a farm, expose the target

@@ -1,0 +1,76 @@
+imports:
+  - adi_lg_plugins
+
+targets:
+  main:
+    features:
+      - zcu102
+      - admv1455
+    # List form (not a dict) because PyVISADevice / PyVISADriver appear twice.
+    resources:
+      - CyberPowerOutlet:
+          address: 10.68.152.115
+          outlet: 1
+          delay: 5.0
+      - RawSerialPort:
+          port: /dev/ttyUSB0
+          speed: 115200
+      - USBSDMuxDevice:
+          name: sdmux
+      - MassStorageDevice:
+          path: /dev/disk/by-id/usb-LinuxAut_sdFST_HS-SD_MMC_00048.00589-0:0
+          use_with_sdmux: true
+      - KuiperRelease:
+          release_version: 2023_R2_P1
+          cache_path: /tmp/kuiper_cache
+          kernel_path: /home/adi/Desktop/zcu102_admv_test_v4/zcu102_admv_test_v4/Image
+          BOOTBIN_path: /home/adi/Desktop/zcu102_admv_test_v4/zcu102_admv_test_v4/BOOT.BIN
+          device_tree_path: /home/adi/Desktop/zcu102_admv_test_v4/zcu102_admv_test_v4/system.dtb
+      # RF bench: R&S FSU67 spectrum analyzer (output) and R&S SMA100B signal
+      # generator (input). "@py" selects the pyvisa-py backend (no NI-VISA).
+      - PyVISADevice:
+          name: fsu_visa
+          type: TCPIP0
+          url: 10.10.100.10::inst0
+          backend: "@py"
+      - PyVISADevice:
+          name: siggen_visa
+          type: TCPIP0
+          url: 10.10.100.15::inst0
+          backend: "@py"
+    drivers:
+      - CyberPowerDriver: {}
+      - USBSDMuxDriver: {}
+      - USBStorageDriver:
+          bindings:
+            storage: sdmux
+      - SerialDriver: {}
+      - ADIShellDriver:
+          prompt: 'root@.*'
+          login_prompt: 'analog login: '
+          username: root
+          password: analog
+      - KuiperDLDriver: {}
+      - MassStorageDriver:
+          partition: /dev/disk/by-id/usb-LinuxAut_sdFST_HS-SD_MMC_00048.00589-0:0-part1
+      - BootFPGASoC:
+          reached_linux_marker: analog
+          wait_for_linux_prompt_timeout: 180
+      - PyVISADriver:
+          name: fsu_session
+          bindings:
+            pyvisa_resource: fsu_visa
+      - PyVISADriver:
+          name: siggen_session
+          bindings:
+            pyvisa_resource: siggen_visa
+      - PyInstSpectrumAnalyzerDriver:
+          name: fsu
+          instrument: FSU67
+          bindings:
+            visa: fsu_session
+      - PyInstSignalGeneratorDriver:
+          name: siggen
+          instrument: SMA100B
+          bindings:
+            visa: siggen_session

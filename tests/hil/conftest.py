@@ -35,9 +35,12 @@ def pytest_addoption(parser):
     g.addoption("--noos-artifacts", default=os.environ.get("NOOS_ARTIFACTS"),
                 help="Dir or .zip of pre-built boot artifacts (skips build)")
     g.addoption("--noos-project", default=os.environ.get("NOOS_PROJECT", "adrv9009"))
-    g.addoption("--noos-platform", default=os.environ.get("NOOS_PLATFORM", "xilinx"))
-    g.addoption("--noos-build", default=os.environ.get("NOOS_BUILD", "demo"))
-    g.addoption("--noos-hardware", default=os.environ.get("NOOS_HARDWARE"))
+    g.addoption("--noos-platform", default=os.environ.get("NOOS_PLATFORM", "xilinx"),
+                help="Reporting metadata only; the platform comes from the CMake preset")
+    g.addoption("--noos-build", default=os.environ.get("NOOS_BUILD", "demo"),
+                help="Project variant (<variant>.conf) passed to no_os_build.py --variant")
+    g.addoption("--noos-board", default=os.environ.get("NOOS_BOARD"),
+                help="Board passed to no_os_build.py --board (required when building)")
     g.addoption("--noos-builds-dir", default=os.environ.get("NOOS_BUILDS_DIR", "build-hil"))
     g.addoption("--noos-python", default=os.environ.get("NOOS_PYTHON", sys.executable))
     g.addoption("--noos-loader", default=os.environ.get("NOOS_LOADER", "auto"),
@@ -50,6 +53,12 @@ def pytest_addoption(parser):
     g.addoption("--noos-jtag-cable", default=os.environ.get("NOOS_JTAG_CABLE"))
     # Phase 2
     g.addoption("--noos-iio-uri", default=os.environ.get("NOOS_IIO_URI"))
+    # RF measurements (signal generator in, spectrum analyzer out)
+    g.addoption("--rf-in-freq", type=float, default=22e9, help="Input tone frequency, Hz")
+    g.addoption("--rf-in-power", type=float, default=-40.0, help="Input tone power, dBm")
+    g.addoption("--rf-out-freq", type=float, default=5e9, help="Analyzer center frequency, Hz")
+    g.addoption("--rf-span", type=float, default=100e6, help="Analyzer span, Hz")
+    g.addoption("--rf-ref-level", type=float, default=-20.0, help="Analyzer reference level, dBm")
 
 
 @pytest.fixture(scope="session")
@@ -94,20 +103,21 @@ def firmware(request, tmp_path_factory):
         builds_dir = Path(request.config.getoption("--noos-builds-dir"))
         if not builds_dir.is_absolute():
             builds_dir = REPO_ROOT / builds_dir
+        board = request.config.getoption("--noos-board")
+        if not board:
+            pytest.fail("--noos-board is required to build (or pass --noos-artifacts)")
         try:
-            builder.build_via_build_projects(
+            artifacts_dir = builder.build_via_no_os_build(
                 project=request.config.getoption("--noos-project"),
-                platform=request.config.getoption("--noos-platform"),
-                build_name=request.config.getoption("--noos-build"),
-                hardware=request.config.getoption("--noos-hardware"),
+                variant=request.config.getoption("--noos-build"),
+                board=board,
                 builds_dir=builds_dir,
-                export_dir=builds_dir / "export",
-                log_dir=builds_dir / "logs",
+                hardware=request.config.getoption("--noos-xsa"),
                 python=request.config.getoption("--noos-python"),
             )
         except subprocess.CalledProcessError as exc:
-            pytest.fail(f"build_projects.py failed: {exc}")
-        arts = builder.discover_artifacts(builds_dir)
+            pytest.fail(f"no_os_build.py failed: {exc}")
+        arts = builder.discover_artifacts(artifacts_dir)
 
     if arts.elf is None and arts.boot_bin is None:
         pytest.skip("no boot artifacts (.elf / BOOT.BIN) available; cannot run on hardware")
